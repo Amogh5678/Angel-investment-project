@@ -8,11 +8,87 @@ body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     background-color: #f4f4f4;
-    color: #333;
+    color: #f4f4f4;
 }
 
+/* Header container styling */
+
+/* Styling for the main headline */
+.main-headline {
+    font-size: 7rem !important;
+    font-weight: 800 !important;
+    color: #e5e5e5 !important;
+    text-align: left !important;
+    line-height: 1.2 !important;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6) !important;
+}
+
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: left;
+    padding: 0.5rem 2rem;
+    background-color: #e5e5e5; /* Darker shade for header background */
+    position: sticky; /* Keeps header fixed at top */
+    top: 0;
+    z-index: 1000; /* Ensures header stays on top of other elements */
+}
+
+/* Logo styling */
+.logo img {
+    display: block;
+    height: 60px; /* Adjust height for consistent alignment */
+}
+
+/* Navigation menu styling */
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 1rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #0f2a2f;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #64ffda; /* Highlighted color on hover */
+}
+
+/* Call-to-action button styling */
+.cta-container {
+    text-align: right;
+    padding: 1rem 2rem;
+}
+
+.cta-button {
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0a192f; /* Text color */
+    background-color: #64ffda; /* Bright green button */
+    padding: 0.5rem 1.2rem;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #52e0c4; /* Slightly darker green on hover */
+}
+
+/*
 header {
-    background-color: #0044cc;
+    background-color: #0f2a2f;
     color: white;
     padding: 20px 0;
     display: flex;
@@ -42,16 +118,16 @@ nav ul li a {
 
 nav ul li a:hover {
     text-decoration: underline;
-}
+} */
 
 .main-content {
     text-align: center;
     padding: 50px;
-    background-color: #fff;
+    background-color: #0f2a2f;
 }
 
 footer {
-    background-color: #333;
+    background-color: #0f2a2f;
     color: white;
     padding: 20px;
     text-align: center;
@@ -130,13 +206,13 @@ footer .contact-info p a {
 
 .quote-section blockquote {
     font-size: 1.5em;
-    color: #555;
+    color: #f4f4f4;
 }
 
 .quote-description {
     margin-top: 10px;
     font-size: 1.2em;
-    color: #777;
+    color: #f4f4f4;
 }
 
 /* .cta-section {
@@ -192,7 +268,7 @@ footer .contact-info p a {
 
 .testimonial span {
     display: block;
-    font-size: 1em;
+    font-size: 1.2em;
     font-weight: bold;
     margin-top: 10px;
     text-align: right;
@@ -215,78 +291,6 @@ footer .footer-icons img {
     margin: 0 10px;
 }
 
-
-/* .features {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 20px;
-    text-align: center;
-}
-
-.feature {
-    display: inline-block;
-    width: 250px; 
-    height: 250px; 
-    margin: 0 10px;
-    overflow: hidden;
-}
-
-.feature img {
-    width: 100%; 
-    height: auto;
-    display: block;
-    transition: transform 0.3s;
-}
-
-.feature img:hover{
-    transition: scale(-0.5);
-}
-
-.feature p {
-    font-size: 1.2em;
-    color: #333;
-    font-weight: bold;
-} */
-
-/*
-.features {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 20px;
-    text-align: center;
-}
-
-.feature {
-    flex: 1;
-    margin: 0 10px;
-    transition: transform 0.3s ease;
-    overflow: hidden;
-}
-
-.feature img {
-    width: 250px; 
-    height: 250px; 
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.feature:hover img {
-    transform: scale(1.2);
-}
-
-.feature:hover {
-    transform: translateY(-10px);
-}
-
-.feature p {
-    font-size: 1.2em;
-    color: #333;
-    font-weight: bold;
-    margin-top: 10px;
-}
-*/
 .feature-section {
     display: flex;
     justify-content: space-around;
@@ -333,5 +337,54 @@ footer .footer-icons img {
     line-height: 1.5;
     color: #c4e5e4; /* Subtle light color */
 }
+
+/* General body styling */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #0f2a2f; /* Dark background */
+    color: #f9f9f9; /* Light text */
+}
+
+/* Call-to-action button styling */
+.cta-container {
+    text-align: right;
+    padding: 1rem 2rem;
+}
+
+.cta-button {
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0a192f; /* Text color */
+    background-color: #64ffda; /* Bright green button */
+    padding: 0.5rem 1.2rem;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #52e0c4; /* Slightly darker green on hover */
+}
+
+/* Hero text styling */
+.hero-text {
+    text-align: left;
+    padding: 4rem 2rem;
+}
+
+.hero-text h1 {
+    font-size: 5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #f9f9f9; /* Light purple/white text */
+}
+
+.hero-text p {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #f9f9f9; /* Muted text */
+}
+
 
 
