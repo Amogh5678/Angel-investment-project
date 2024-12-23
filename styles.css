@@ -1,0 +1,337 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #0044cc;
+    color: white;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo img {
+    max-width: 100%;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+.main-content {
+    text-align: center;
+    padding: 50px;
+    background-color: #fff;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+footer .footer-links ul {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+footer .footer-links ul li {
+    display: inline;
+    margin-right: 15px;
+}
+
+footer .footer-links ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+footer .footer-links ul li a:hover {
+    text-decoration: underline;
+}
+
+footer .social-media {
+    margin-bottom: 20px;
+}
+
+footer .social-media .social-icon {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+footer .social-media .social-icon:hover {
+    text-decoration: underline;
+}
+
+footer .contact-info p {
+    margin-top: 10px;
+}
+
+footer .contact-info p a {
+    color: white;
+    text-decoration: none;
+}
+
+.social-media .social-icon {
+    display: inline-block;
+    width: 40px; /* Adjust the width as needed */
+    height: 40px; /* Adjust the height as needed */
+    margin: 0 10px;
+    overflow: hidden;
+}
+
+.social-media .social-icon img {
+    width: 100%; /* Makes the image fill the parent container */
+    height: auto;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.social-media .social-icon img:hover {
+    transform: scale(1.5); /* Scale up slightly on hover for effect */
+}
+
+
+
+
+/* Checking
+*/
+.quote-section {
+    margin: 30px 0;
+    font-style: italic;
+}
+
+.quote-section blockquote {
+    font-size: 1.5em;
+    color: #555;
+}
+
+.quote-description {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #777;
+}
+
+/* .cta-section {
+    background-color: #0044cc;
+    color: white;
+    padding: 20px;
+    margin: 30px 0;
+}
+
+.cta-section h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.cta-section p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.cta-btn {
+    background-color: #ff9800;
+    color: white;
+    padding: 15px 25px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+}
+
+.cta-btn:hover {
+    background-color: #f57c00;
+} */
+
+.testimonial-section {
+    margin: 50px 0;
+}
+
+.testimonial-section h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.testimonial {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.testimonial p {
+    font-size: 1.2em;
+    font-style: italic;
+}
+
+.testimonial span {
+    display: block;
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: right;
+}
+
+
+/* Footer Bottom */
+footer .footer-bottom {
+    margin-top: 20px;
+    font-size: 1em;
+}
+
+footer .footer-bottom .footer-icons a {
+    margin: 0 15px;
+}
+
+footer .footer-icons img {
+    width: 30px;
+    height: 30px;
+    margin: 0 10px;
+}
+
+
+/* .features {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.feature {
+    display: inline-block;
+    width: 250px; 
+    height: 250px; 
+    margin: 0 10px;
+    overflow: hidden;
+}
+
+.feature img {
+    width: 100%; 
+    height: auto;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.feature img:hover{
+    transition: scale(-0.5);
+}
+
+.feature p {
+    font-size: 1.2em;
+    color: #333;
+    font-weight: bold;
+} */
+
+/*
+.features {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.feature {
+    flex: 1;
+    margin: 0 10px;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.feature img {
+    width: 250px; 
+    height: 250px; 
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.feature:hover img {
+    transform: scale(1.2);
+}
+
+.feature:hover {
+    transform: translateY(-10px);
+}
+
+.feature p {
+    font-size: 1.2em;
+    color: #333;
+    font-weight: bold;
+    margin-top: 10px;
+}
+*/
+.feature-section {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #0f2a2f; /* Background similar to the example */
+    color: #ffffff;
+    gap: 20px;
+}
+
+.feature-card {
+    background-color: #162f33; /* Card background */
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    width: 22%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px); /* Lift card on hover */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.feature-card img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover img {
+    transform: scale(1.1); /* Enlarge image on hover */
+}
+
+.feature-card h3 {
+    font-size: 1.2em;
+    margin: 10px 0 5px;
+    color: #e0f5f4; /* Light text color */
+}
+
+.feature-card p {
+    font-size: 0.9em;
+    padding: 0 10px 10px;
+    line-height: 1.5;
+    color: #c4e5e4; /* Subtle light color */
+}
+
+
