@@ -1,0 +1,117 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #dfe9f3, #ffffff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* Container */
+  .container {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  /* Card */
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  /* Form Styles */
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    background: #f7f8fa;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none; /* Remove borders */
+  }
+  
+  .input-row {
+    display: flex;
+    gap: 10px; /* Add spacing between the input groups */
+    flex-wrap: wrap; /* Ensure inputs wrap to the next line on smaller screens */
+  }
+  
+  .input-row .input-group {
+    flex: 1;
+    min-width: 48%; /* Ensure inputs share space evenly and wrap when needed */
+  }
+  
+  /* Input fields */
+  .input-group input,
+  .input-group select {
+    font-size: 14px;
+    width: 100%; /* Ensure inputs take the full width of their container */
+    border: none; /* Remove borders */
+    outline: none; /* Remove focus outline */
+    background: transparent; /* Optional: Transparent background */
+  }
+  
+  /* Optional: Focus styles for better UX */
+  .input-group input:focus,
+  .input-group select:focus {
+    outline: none;
+    background-color: #e8f0fe; /* Optional: Slight background color on focus */
+  }
+  
+  /* Button */
+  .submit-btn {
+    background: #5c6bf7;
+    color: #fff;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .submit-btn:hover {
+    background: #4a56d4;
+  }
+  
+  /* Footer Text */
+  .footer-text {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .footer-text a {
+    color: #5c6bf7;
+    text-decoration: none;
+  }
+  
+  .footer-text a:hover {
+    text-decoration: underline;
+  }
+  

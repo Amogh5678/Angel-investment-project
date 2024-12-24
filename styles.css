@@ -45,12 +45,12 @@ body {
 nav ul {
     list-style: none;
     display: flex;
-    margin: 0;
+    margin: 0 0 0 65rem;
     padding: 0;
 }
 
 nav ul li {
-    margin: 0 1rem;
+    margin: 1rem;
 }
 
 nav ul li a {
@@ -370,7 +370,7 @@ body {
 /* Hero text styling */
 .hero-text {
     text-align: left;
-    padding: 4rem 2rem;
+    padding: 7.5rem 2rem;
 }
 
 .hero-text h1 {
