@@ -1,4 +1,2 @@
 flask
-flask-sqlalchemy
-flask-migrate
-pymysql
+Flask-PyMongo
