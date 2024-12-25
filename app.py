@@ -23,7 +23,9 @@ except Exception as e:
 
 @app.route("/")
 def homepage():
-    return render_template("homepage.html")
+    name = session.get("name", None)  # Retrieve the user's name from the session
+    return render_template("homepage.html", name=name)
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
