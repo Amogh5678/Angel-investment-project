@@ -136,6 +136,75 @@ def login():
     return render_template("login.html")
 
 # ... (rest of the routes remain the same)
+################################################################################################
+# Dashboard route for Startups
+@app.route("/startup-dashboard")
+def startup_dashboard():
+    if "role" in session and session["role"] == "startup":
+        user_id = session["user_id"]
+        projects = list(mongo.db.projects.find({"startup_id": ObjectId(user_id)}))
+        return render_template("startup_dashboard.html", name=session["name"], projects=projects)
+    return redirect("/login")
+
+# Dashboard route for Investors
+@app.route("/investor-dashboard")
+def investor_dashboard():
+    if "role" in session and session["role"] == "investor":
+        projects = list(mongo.db.projects.find())
+        return render_template("investor_dashboard.html", name=session["name"], projects=projects)
+    return redirect("/login")
+
+# Route to create a project (Startup)
+@app.route("/create-project", methods=["GET", "POST"])
+def create_project():
+    if request.method == "POST":
+        title = request.form.get("title")
+        description = request.form.get("description")
+        funding_goal = float(request.form.get("funding_goal"))
+        deadline = request.form.get("deadline")
+        user_id = session["user_id"]
+
+        # Insert project into database
+        project = {
+            "title": title,
+            "description": description,
+            "funding_goal": funding_goal,
+            "current_funding": 0,
+            "deadline": deadline,
+            "startup_id": ObjectId(user_id)
+        }
+        mongo.db.projects.insert_one(project)
+        return redirect("/startup-dashboard")
+    return render_template("create_project.html")
+
+# Route to invest in a project (Investor)
+@app.route("/invest/<project_id>", methods=["POST"])
+def invest(project_id):
+    if session["role"] == "investor":
+        amount = float(request.form.get("investment"))
+        project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
+
+        if project:
+            # Update project's current funding
+            new_funding = project["current_funding"] + amount
+            mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"current_funding": new_funding}})
+
+            # Record the investment
+            investment = {
+                "investor_id": ObjectId(session["user_id"]),
+                "project_id": ObjectId(project_id),
+                "amount": amount,
+                "date": datetime.datetime.utcnow()
+            }
+            mongo.db.investments.insert_one(investment)
+            return redirect("/investor-dashboard")
+    return redirect("/login")
+########################################################
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
