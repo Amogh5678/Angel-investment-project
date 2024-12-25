@@ -114,7 +114,7 @@ def login():
             password = request.form.get("password")
             role = request.form.get("role")
 
-            print(f"Login attempt - Email: {email}, Role: {role}")  # Debug log
+            print(f"Login attempt - Email: {email}, Role: {role}")
 
             if not all([email, password, role]):
                 return jsonify({"error": "All fields are required"}), 400
@@ -125,20 +125,24 @@ def login():
                 session["user_id"] = str(user["_id"])
                 session["role"] = user["role"]
                 session["name"] = user["name"]
-                print(f"Successful login for user: {email}")  # Debug log
+                print(f"Successful login for user: {email}")
+                
+                # Redirect investors to investor dashboard after login
+                if role == "investor":
+                    return redirect(url_for("investor_dashboard"))
                 return redirect(url_for("homepage"))
             
-            print(f"Failed login attempt for user: {email}")  # Debug log
+            print(f"Failed login attempt for user: {email}")
             return jsonify({"error": "Invalid credentials"}), 401
 
         except Exception as e:
-            print(f"Login error: {str(e)}")  # Debug log
+            print(f"Login error: {str(e)}")
             return jsonify({"error": f"Login error: {str(e)}"}), 500
 
-    return render_template("login.html")
+    # Get the next parameter if it exists
+    next_page = request.args.get('next')
+    return render_template("login.html", next=next_page)
 
-# ... (rest of the routes remain the same)
-################################################################################################
 # Dashboard route for Startups
 @app.route("/startup-dashboard")
 def startup_dashboard():
@@ -156,6 +160,7 @@ def investor_dashboard():
         return render_template("investor_dashboard.html", name=session["name"], projects=projects)
     return redirect("/login")
 
+# Route to create a project (Startup)
 # Route to create a project (Startup)
 @app.route("/create-project", methods=["GET", "POST"])
 def create_project():
@@ -176,7 +181,7 @@ def create_project():
             "startup_id": ObjectId(user_id)
         }
         mongo.db.projects.insert_one(project)
-        return redirect("/startup-dashboard")
+        return redirect("/create-project")
     return render_template("create_project.html")
 
 # Route to invest in a project (Investor)
@@ -201,12 +206,13 @@ def invest(project_id):
             mongo.db.investments.insert_one(investment)
             return redirect("/investor-dashboard")
     return redirect("/login")
-########################################################
 
-
-
+@app.route('/logout')
+def logout():
+    # Clear the session data
+    session.clear()
+    # Redirect the user to the login page (or homepage)
+    return redirect(url_for('homepage'))  # Replace 'login' with your login route name
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
