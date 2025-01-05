@@ -86,7 +86,7 @@
   
   /* Button */
   .submit-btn {
-    background: #5c6bf7;
+    background: #0f2a2f;
     color: #fff;
     padding: 10px;
     font-size: 16px;
@@ -96,7 +96,7 @@
   }
   
   .submit-btn:hover {
-    background: #4a56d4;
+    background: #0f2a2f;
   }
   
   /* Footer Text */
@@ -107,7 +107,7 @@
   }
   
   .footer-text a {
-    color: #5c6bf7;
+    color: #0f2a2f;
     text-decoration: none;
   }
   

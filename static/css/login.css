@@ -56,11 +56,11 @@ select {
 input:focus,
 select:focus {
   outline: none;
-  border-color: #7a5ef8;
+  border-color: #0f2a2f;
 }
 
 .btn {
-  background-color: #7a5ef8;
+  background-color: #0f2a2f;
   color: #ffffff;
   border: none;
   padding: 10px;
@@ -71,12 +71,12 @@ select:focus {
 }
 
 .btn:hover {
-  background-color: #5a45c8;
+  background-color: #0f2a2f;
 }
 
 .forgot-password {
   font-size: 12px;
-  color: #7a5ef8;
+  color: #0f2a2f;
   text-decoration: none;
   margin-top: 15px;
   display: inline-block;
