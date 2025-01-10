@@ -91,7 +91,7 @@
     <script>
         function checkLoginBeforeFundRaise() {
             {% if session['user_id'] %}
-                window.location.href = "{{ url_for('create_project') }}"; // Redirect to create project
+                window.location.href = "{{ url_for('startup_dashboard') }}"; // Redirect to create project
             {% else %}
                 window.location.href = "/login?next={{ url_for('create_project') }}"; // Redirect to login
             {% endif %}
