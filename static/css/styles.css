@@ -51,7 +51,7 @@ body {
 nav ul {
     list-style: none;
     display: flex;
-    margin: 0 0 0 65rem;
+    margin: 0 0 0 63rem;
     padding: 0;
 }
 
@@ -393,4 +393,29 @@ body {
 }
 
 
+.header-container {
+    display: flex; /* Align logo and nav side by side */
+    align-items: center; /* Vertically align items */
+    justify-content: space-between; /* Space between logo and nav */
+}
+
+.logo {
+    font-size: 3em; /* Set size for AngelFundr */
+    font-weight: bold; /* Bold text */
+    color: #333; /* Neutral color */
+    margin-left: 20px; /* Add some margin to the left */
+}
+
+.logo a {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Use the same color as the text */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 15px; /* Add spacing between nav items */
+}
 
