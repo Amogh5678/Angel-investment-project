@@ -133,7 +133,7 @@ def login():
                     return redirect(url_for("admin_panel"))  # Redirect to the admin dashboard if the user is an admin
                 elif role == "investor":
                     return redirect(url_for("investor_dashboard"))  # Investor dashboard if role is investor
-                elif role == "startup":
+                elif role == "entrepreneur":
                     return redirect(url_for("startup_dashboard"))  # Startup dashboard if role is startup
 
                 # if role == "admin":
@@ -154,7 +154,7 @@ def login():
 # Dashboard route for Startups
 @app.route("/startup-dashboard")
 def startup_dashboard():
-    if "role" in session and session["role"] == "startup":
+    if "role" in session and session["role"] == "entrepreneur":
         user_id = session["user_id"]
         projects = list(mongo.db.projects.find({"startup_id": ObjectId(user_id)}))
         return render_template("startup_dashboard.html", name=session["name"], projects=projects)
@@ -167,31 +167,6 @@ def investor_dashboard():
         projects = list(mongo.db.projects.find())
         return render_template("investor_dashboard.html", name=session["name"], projects=projects)
     return redirect("/login")
-
-# Admin Dashboard route
-# @app.route("/admin-dashboard", methods=["GET", "POST"])
-# def admin_dashboard():
-#     if "role" in session and session["role"] == "admin":
-#         if request.method == "POST":
-#             project_id = request.form.get("project_id")
-#             action = request.form.get("action")
-
-#             if action == "approve":
-#                 mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"approved": True}})
-#             elif action == "reject":
-#                 mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"approved": False}})
-            
-#             # After action, redirect to the same page to refresh the list
-#             return redirect(url_for("admin_dashboard"))
-
-#         # Retrieve data for admin (pending projects and users)
-#         projects = list(mongo.db.projects.find({"approved": False}))  # Pending projects
-#         users = list(mongo.db.users.find())  # All users
-#         return render_template("admin_dashboard.html", projects=projects, users=users)
-
-#     return redirect("/login")  # If not an admin, redirect to login
-
-
 
 
 # Route to create a project (Startup)
