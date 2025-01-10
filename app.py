@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from bson.objectid import ObjectId
 import datetime
+from models import Investor
+
 
 app = Flask(__name__)
 
@@ -164,13 +166,25 @@ def startup_dashboard():
 @app.route("/investor-dashboard")
 def investor_dashboard():
     if "role" in session and session["role"] == "investor":
+        # Get all projects and ensure they have the required fields
         projects = list(mongo.db.projects.find())
+        for project in projects:
+            # Add missing fields if they don't exist
+            if 'total_equity' not in project:
+                project['total_equity'] = 0
+            if 'remaining_equity' not in project:
+                project['remaining_equity'] = project['total_equity']
+            if 'status' not in project:
+                project['status'] = 'active'
+            if 'investments' not in project:
+                project['investments'] = []
         return render_template("investor_dashboard.html", name=session["name"], projects=projects)
     return redirect("/login")
 
 
 # Route to create a project (Startup)
 # Route to create a project (Startup)
+# Update the create_project route
 @app.route("/create-project", methods=["GET", "POST"])
 def create_project():
     if request.method == "POST":
@@ -178,6 +192,7 @@ def create_project():
         description = request.form.get("description")
         funding_goal = float(request.form.get("funding_goal"))
         deadline = request.form.get("deadline")
+        total_equity = float(request.form.get("total_equity", 0))  # New field
         user_id = session["user_id"]
 
         # Insert project into database
@@ -187,34 +202,102 @@ def create_project():
             "funding_goal": funding_goal,
             "current_funding": 0,
             "deadline": deadline,
-            "startup_id": ObjectId(user_id)
+            "startup_id": ObjectId(user_id),
+            "total_equity": total_equity,            # Total equity being offered
+            "remaining_equity": total_equity,        # Initially same as total equity
+            "status": "active",                     # Project status
+            "investments": []                       # List to track investments
         }
         mongo.db.projects.insert_one(project)
-        return redirect("/create-project")
+        return redirect("/startup-dashboard")
     return render_template("create_project.html")
 
-# Route to invest in a project (Investor)
+# Update the invest route
 @app.route("/invest/<project_id>", methods=["POST"])
 def invest(project_id):
     if session["role"] == "investor":
-        amount = float(request.form.get("investment"))
-        project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
-
-        if project:
-            # Update project's current funding
-            new_funding = project["current_funding"] + amount
-            mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"current_funding": new_funding}})
-
-            # Record the investment
-            investment = {
-                "investor_id": ObjectId(session["user_id"]),
-                "project_id": ObjectId(project_id),
-                "amount": amount,
-                "date": datetime.datetime.utcnow()
-            }
-            mongo.db.investments.insert_one(investment)
-            return redirect("/investor-dashboard")
+        try:
+            # Get the investment amount from the form
+            amount = float(request.form.get("investment"))
+            
+            # Fetch project details
+            project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
+            if not project:
+                return jsonify({"error": "Project not found"}), 404
+            
+            # Check if the project is active
+            if project.get("status") != "active":
+                return jsonify({"error": "Project is not accepting investments"}), 400
+            
+            # Calculate equity percentage
+            total_equity = project.get("total_equity", 0)
+            funding_goal = project.get("funding_goal", 1)  # Avoid division by zero
+            equity_percentage = (amount / funding_goal) * total_equity
+            
+            # Ensure the equity percentage is available
+            remaining_equity = project.get("remaining_equity", total_equity)
+            if equity_percentage > remaining_equity:
+                return jsonify({"error": "Not enough equity available"}), 400
+            
+            # Create an instance of the Investor class
+            investor = Investor(mongo.db)
+            
+            # Process the investment
+            if investor.invest_in_project(project_id, session["user_id"], amount, equity_percentage):
+                return redirect(url_for("investor_dashboard"))
+            else:
+                return jsonify({"error": "Investment failed"}), 400
+        
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    
     return redirect("/login")
+
+
+# Update the invest_pay route
+@app.route('/invest/<project_id>/pay', methods=['POST'])
+def invest_pay(project_id):
+    if session.get("role") == "investor":
+        try:
+            amount = float(request.form.get("investment")) * 100  # Amount in cents
+            equity_percentage = float(request.form.get("equity_percentage"))
+            
+            intent = stripe.PaymentIntent.create(
+                amount=int(amount),
+                currency="usd",
+                metadata={
+                    "project_id": project_id,
+                    "investor_id": session.get("user_id"),
+                    "equity_percentage": equity_percentage
+                },
+            )
+            return jsonify({"clientSecret": intent['client_secret']})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    return jsonify({"error": "Unauthorized access"}), 401
+
+# Route to invest in a project (Investor)
+# @app.route("/invest/<project_id>", methods=["POST"])
+# def invest(project_id):
+#     if session["role"] == "investor":
+#         amount = float(request.form.get("investment"))
+#         project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
+
+#         if project:
+#             # Update project's current funding
+#             new_funding = project["current_funding"] + amount
+#             mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"current_funding": new_funding}})
+
+#             # Record the investment
+#             investment = {
+#                 "investor_id": ObjectId(session["user_id"]),
+#                 "project_id": ObjectId(project_id),
+#                 "amount": amount,
+#                 "date": datetime.datetime.utcnow()
+#             }
+#             mongo.db.investments.insert_one(investment)
+#             return redirect("/investor-dashboard")
+#     return redirect("/login")
 
 @app.route('/logout')
 def logout():

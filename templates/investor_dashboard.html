@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investor Dashboard</title>
     <link rel="stylesheet" href="../static/css/investor.css">
+    <script>
+        function calculateEquity(event, fundingGoal, totalEquity) {
+            const amount = parseFloat(event.target.value) || 0;
+            const equity = ((amount / fundingGoal) * totalEquity).toFixed(2);
+            const equityDisplay = event.target.closest('form').querySelector('.calculated-equity');
+            equityDisplay.textContent = equity > 0 ? `Calculated Equity: ${equity}%` : '';
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -25,13 +33,49 @@
                 <h3>{{ project.title }}</h3>
                 <p>{{ project.description }}</p>
                 <p>Funding Goal: ${{ project.funding_goal }}</p>
-                <p>Current Funding: ${{ project.current_funding }}</p>
+                <p>Current Funding: ${{ project.current_funding or 0 }}</p>
+                <p>Total Equity Offered: {{ project.get('total_equity', 0) }}%</p>
+                <p>Remaining Equity: {{ project.get('remaining_equity', project.get('total_equity', 0)) }}%</p>
+                <p>Status: {{ project.get('status', 'active').title() }}</p>
                 <p>Deadline: {{ project.deadline }}</p>
+                
+                {% if project.get('status', 'active') == 'active' and project.get('remaining_equity', 0) > 0 %}
                 <form action="/invest/{{ project._id }}" method="POST">
-                    <label for="investment">Invest Amount:</label>
-                    <input type="number" name="investment" required>
+                    <label for="investment">Investment Amount ($):</label>
+                    <input 
+                        type="number" 
+                        name="investment" 
+                        required 
+                        min="1" 
+                        oninput="calculateEquity(event, {{ project.funding_goal }}, {{ project.get('total_equity', 0) }})">
+                    
+                    <p class="calculated-equity" style="color: green; font-weight: bold;"></p>
+                    
                     <button type="submit">Invest</button>
                 </form>
+                {% else %}
+                <p class="status-message">
+                    {% if project.get('status', 'active') == 'completed' %}
+                        Funding Goal Reached
+                    {% elif project.get('remaining_equity', 0) <= 0 %}
+                        No More Equity Available
+                    {% endif %}
+                </p>
+                {% endif %}
+
+                {% if project.get('investments', []) %}
+                <div class="investment-history">
+                    <h4>Investment History</h4>
+                    <ul>
+                    {% for investment in project.investments %}
+                        <li>
+                            Amount: ${{ investment.amount }} 
+                            Equity: {{ investment.equity_percentage }}%
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
             {% else %}
             <p>No projects available at the moment.</p>

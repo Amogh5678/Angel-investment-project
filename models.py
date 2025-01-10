@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 from datetime import datetime
 
 class User:
-    def _init_(self, db):
+    def __init__(self, db):
         self.collection = db["users"]
 
     def create_user(self, name, email, password, phone, age, role):
@@ -22,16 +22,12 @@ class User:
 
     def find_by_id(self, user_id):
         return self.collection.find_one({"_id": ObjectId(user_id)})
-    
-    def is_admin(self, user_id):
-        user = self.find_by_id(user_id)
-        return user and user.get("role") == "admin"
 
 class Project:
-    def _init_(self, db):
+    def __init__(self, db):
         self.collection = db["projects"]
 
-    def create_project(self, title, description, funding_goal, deadline, startup_id):
+    def create_project(self, title, description, funding_goal, deadline, startup_id, total_equity):
         project_data = {
             "title": title,
             "description": description,
@@ -39,7 +35,11 @@ class Project:
             "current_funding": 0,
             "deadline": deadline,
             "startup_id": ObjectId(startup_id),
-            "approved": False  # Default state is not approved
+            "approved": False,  # Default state is not approved
+            "total_equity": total_equity,  # Total equity being offered
+            "remaining_equity": total_equity,  # Remaining equity available
+            "status": "active",  # Status can be: active, completed, expired
+            "investments": []  # List to track all investments
         }
         return self.collection.insert_one(project_data).inserted_id
 
@@ -55,27 +55,53 @@ class Project:
             {"$set": {"approved": True}}
         )
     
-    def reject_project(self, project_id):
-        return self.collection.update_one(
-            {"_id": ObjectId(project_id)},
-            {"$set": {"approved": False}}
-        )
-    def find_pending_projects(self):
-        return list(self.collection.find({"approved": False}))
-
-class Investor:
-    def _init_(self, db):
-        self.collection = db["investors"]
-
-    def invest_in_project(self, project_id, amount):
-        project = self.collection.find_one({"_id": ObjectId(project_id)})
-        if project:
-            new_funding = project.get("current_funding", 0) + amount
+    def update_project_status(self, project_id):
+        project = self.find_by_id(project_id)
+        if project and project["current_funding"] >= project["funding_goal"]:
             return self.collection.update_one(
                 {"_id": ObjectId(project_id)},
-                {"$set": {"current_funding": new_funding}}
+                {"$set": {"status": "completed"}}
             )
         return None
+
+class Investor:
+    def __init__(self, db):
+        self.collection = db["projects"]  # Note: We're using the projects collection
+
+    def invest_in_project(self, project_id, investor_id, amount, equity_percentage):
+        project = self.collection.find_one({"_id": ObjectId(project_id)})
+        if project and project["remaining_equity"] >= equity_percentage:
+            new_funding = project.get("current_funding", 0) + amount
+            new_remaining_equity = project["remaining_equity"] - equity_percentage
+            
+            # Create investment record
+            investment = {
+                "investor_id": ObjectId(investor_id),
+                "amount": amount,
+                "equity_percentage": equity_percentage,
+                "timestamp": datetime.utcnow()
+            }
+            
+            update_result = self.collection.update_one(
+                {"_id": ObjectId(project_id)},
+                {
+                    "$set": {
+                        "current_funding": new_funding,
+                        "remaining_equity": new_remaining_equity
+                    },
+                    "$push": {"investments": investment}
+                }
+            )
+            
+            if update_result.modified_count > 0:
+                # Check if funding goal is met and update status
+                if new_funding >= project["funding_goal"]:
+                    self.collection.update_one(
+                        {"_id": ObjectId(project_id)},
+                        {"$set": {"status": "completed"}}
+                    )
+                return True
+        return False
 
 # New Models for Additional Features
 
