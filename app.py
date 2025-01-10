@@ -237,11 +237,17 @@ def admin_panel():
             project_id = request.form.get("project_id")
             action = request.form.get("action")
 
-            if action == "approve":
-                mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"status": "Approved"}})
-            elif action == "reject":
-                mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"status": "Rejected"}})
-            return redirect(url_for("admin"))
+            if project_id:
+                if action == "approve":
+                    mongo.db.projects.update_one(
+                        {"_id": ObjectId(project_id)},
+                        {"$set": {"status": "Approved"}}
+                    )
+                elif action == "reject":
+                    mongo.db.projects.delete_one({"_id": ObjectId(project_id)})
+
+            # Redirect to the admin page after the action
+            return redirect(url_for("admin_panel"))
 
         return render_template("admin_dashboard.html", users=users, projects=projects)
 
