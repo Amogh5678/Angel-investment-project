@@ -159,7 +159,7 @@ def startup_dashboard():
     if "role" in session and session["role"] == "entrepreneur":
         user_id = session["user_id"]
         
-        # Fetch projects with a pipeline to include investor details
+        # Aggregation pipeline to get projects with investor details
         pipeline = [
             {
                 "$match": {"startup_id": ObjectId(user_id)}
@@ -169,23 +169,34 @@ def startup_dashboard():
                     "from": "users",
                     "localField": "investments.investor_id",
                     "foreignField": "_id",
-                    "as": "investors"
+                    "as": "investor_details"
                 }
             }
         ]
         
-        projects = list(mongo.db.projects.aggregate(pipeline))
-        
-        # Process projects to add investor names to investments
-        for project in projects:
-            investors_dict = {str(investor['_id']): investor['name'] for investor in project.get('investors', [])}
+        try:
+            projects = list(mongo.db.projects.aggregate(pipeline))
             
-            if 'investments' in project:
-                for investment in project['investments']:
-                    investor_id = str(investment['investor_id'])
-                    investment['investor_name'] = investors_dict.get(investor_id, 'Unknown Investor')
-        
-        return render_template("startup_dashboard.html", name=session["name"], projects=projects)
+            # Process each project to add investor names
+            for project in projects:
+                # Create a map of investor IDs to names
+                investor_map = {str(investor['_id']): investor['name'] 
+                              for investor in project.get('investor_details', [])}
+                
+                # Add investor names to investments
+                if 'investments' in project:
+                    for investment in project['investments']:
+                        investor_id = str(investment['investor_id'])
+                        investment['investor_name'] = investor_map.get(investor_id, 'Unknown Investor')
+                        # Format amount to 2 decimal places
+                        investment['amount'] = float(investment['amount'])
+            
+            return render_template("startup_dashboard.html", name=session["name"], projects=projects)
+            
+        except Exception as e:
+            print(f"Error fetching projects: {e}")
+            return render_template("startup_dashboard.html", name=session["name"], projects=[])
+            
     return redirect("/login")
 
 
