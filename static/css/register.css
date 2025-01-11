@@ -114,6 +114,7 @@
   .footer-text a:hover {
     text-decoration: underline;
   }
+<<<<<<< HEAD
   
 
   /* added now */
@@ -125,3 +126,6 @@
   margin-bottom: 15px;
   display: none; /* Initially hidden */
 }
+=======
+  
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8

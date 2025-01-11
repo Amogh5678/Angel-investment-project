@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* styles.css
+=======
+/* styles.css */
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
 body {
   font-family: Arial, sans-serif;
   background-color: #f5f8ff;
@@ -84,6 +88,7 @@ select:focus {
 
 .forgot-password:hover {
   text-decoration: underline;
+<<<<<<< HEAD
 } */
 
 
@@ -289,3 +294,6 @@ select:focus {
 .forgot-password:hover {
   text-decoration: underline;
 }
+=======
+}
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8

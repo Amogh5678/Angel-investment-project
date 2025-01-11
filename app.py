@@ -134,11 +134,21 @@ def login():
                 if role == "admin":
                     return redirect(url_for("admin_panel"))  # Redirect to the admin dashboard if the user is an admin
                 elif role == "investor":
+<<<<<<< HEAD
                     # return redirect(url_for("investor_dashboard"))  # Investor dashboard if role is investor
                     return render_template("homepage.html")
                 elif role == "entrepreneur":
                     # return redirect(url_for("startup_dashboard"))  # Startup dashboard if role is startup
                     return render_template("homepage.html")
+=======
+                    return redirect(url_for("investor_dashboard"))  # Investor dashboard if role is investor
+                elif role == "entrepreneur":
+                    return redirect(url_for("startup_dashboard"))  # Startup dashboard if role is startup
+
+                # if role == "admin":
+                #     return redirect(url_for("admin_dashboard"))
+                # return redirect(url_for("homepage"))
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
             
             print(f"Failed login attempt for user: {email}")
             return jsonify({"error": "Invalid credentials"}), 401
@@ -151,8 +161,11 @@ def login():
     next_page = request.args.get('next')
     return render_template("login.html", next=next_page)
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
 # Dashboard route for Startups
 @app.route("/startup-dashboard")
 def startup_dashboard():
@@ -162,6 +175,7 @@ def startup_dashboard():
         return render_template("startup_dashboard.html", name=session["name"], projects=projects)
     return redirect("/login")
 
+<<<<<<< HEAD
 
 @app.route("/investor-dashboard")
 def investor_dashboard():
@@ -192,6 +206,28 @@ def investor_dashboard():
 
 
 
+=======
+# Dashboard route for Investors
+@app.route("/investor-dashboard")
+def investor_dashboard():
+    if "role" in session and session["role"] == "investor":
+        # Get all projects and ensure they have the required fields
+        projects = list(mongo.db.projects.find())
+        for project in projects:
+            # Add missing fields if they don't exist
+            if 'total_equity' not in project:
+                project['total_equity'] = 0
+            if 'remaining_equity' not in project:
+                project['remaining_equity'] = project['total_equity']
+            if 'status' not in project:
+                project['status'] = 'active'
+            if 'investments' not in project:
+                project['investments'] = []
+        return render_template("investor_dashboard.html", name=session["name"], projects=projects)
+    return redirect("/login")
+
+
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
 # Route to create a project (Startup)
 # Route to create a project (Startup)
 # Update the create_project route
@@ -222,7 +258,10 @@ def create_project():
         return redirect("/startup-dashboard")
     return render_template("create_project.html")
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
 # Update the invest route
 @app.route("/invest/<project_id>", methods=["POST"])
 def invest(project_id):
@@ -287,7 +326,32 @@ def invest_pay(project_id):
             return jsonify({"error": str(e)}), 500
     return jsonify({"error": "Unauthorized access"}), 401
 
+<<<<<<< HEAD
 
+=======
+# Route to invest in a project (Investor)
+# @app.route("/invest/<project_id>", methods=["POST"])
+# def invest(project_id):
+#     if session["role"] == "investor":
+#         amount = float(request.form.get("investment"))
+#         project = mongo.db.projects.find_one({"_id": ObjectId(project_id)})
+
+#         if project:
+#             # Update project's current funding
+#             new_funding = project["current_funding"] + amount
+#             mongo.db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"current_funding": new_funding}})
+
+#             # Record the investment
+#             investment = {
+#                 "investor_id": ObjectId(session["user_id"]),
+#                 "project_id": ObjectId(project_id),
+#                 "amount": amount,
+#                 "date": datetime.datetime.utcnow()
+#             }
+#             mongo.db.investments.insert_one(investment)
+#             return redirect("/investor-dashboard")
+#     return redirect("/login")
+>>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
 
 @app.route('/logout')
 def logout():
