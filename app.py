@@ -158,7 +158,33 @@ def login():
 def startup_dashboard():
     if "role" in session and session["role"] == "entrepreneur":
         user_id = session["user_id"]
-        projects = list(mongo.db.projects.find({"startup_id": ObjectId(user_id)}))
+        
+        # Fetch projects with a pipeline to include investor details
+        pipeline = [
+            {
+                "$match": {"startup_id": ObjectId(user_id)}
+            },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "investments.investor_id",
+                    "foreignField": "_id",
+                    "as": "investors"
+                }
+            }
+        ]
+        
+        projects = list(mongo.db.projects.aggregate(pipeline))
+        
+        # Process projects to add investor names to investments
+        for project in projects:
+            investors_dict = {str(investor['_id']): investor['name'] for investor in project.get('investors', [])}
+            
+            if 'investments' in project:
+                for investment in project['investments']:
+                    investor_id = str(investment['investor_id'])
+                    investment['investor_name'] = investors_dict.get(investor_id, 'Unknown Investor')
+        
         return render_template("startup_dashboard.html", name=session["name"], projects=projects)
     return redirect("/login")
 

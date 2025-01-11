@@ -73,36 +73,34 @@ class Investor:
         if project and project["remaining_equity"] >= equity_percentage:
             new_funding = project.get("current_funding", 0) + amount
             new_remaining_equity = project["remaining_equity"] - equity_percentage
-            
-            # Create investment record
+        
+        # Create investment record with investor details
             investment = {
                 "investor_id": ObjectId(investor_id),
                 "amount": amount,
                 "equity_percentage": equity_percentage,
                 "timestamp": datetime.utcnow()
-            }
-            
+                    }
+        
             update_result = self.collection.update_one(
-                {"_id": ObjectId(project_id)},
+              {"_id": ObjectId(project_id)},
                 {
-                    "$set": {
-                        "current_funding": new_funding,
-                        "remaining_equity": new_remaining_equity
-                    },
-                    "$push": {"investments": investment}
-                }
-            )
-            
+                "$set": {
+                    "current_funding": new_funding,
+                    "remaining_equity": new_remaining_equity
+                },
+                "$push": {"investments": investment}
+            }
+        )
+        
             if update_result.modified_count > 0:
-                # Check if funding goal is met and update status
                 if new_funding >= project["funding_goal"]:
                     self.collection.update_one(
-                        {"_id": ObjectId(project_id)},
-                        {"$set": {"status": "completed"}}
-                    )
+                    {"_id": ObjectId(project_id)},
+                    {"$set": {"status": "completed"}}
+                )
                 return True
         return False
-
 # New Models for Additional Features
 
 class Document:

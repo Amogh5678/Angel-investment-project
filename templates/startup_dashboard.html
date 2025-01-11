@@ -69,22 +69,23 @@
                 </div>
 
                 <!-- Investment Details -->
-                {% if project.get('investments', []) %}
-                <div class="investment-details">
-                    <h4>Investment Details</h4>
-                    <ul>
-                        {% for investment in project.investments %}
-                        <li>
-                            Investor: {{ investment.investor_name }}<br>
-                            Amount: ${{ investment.amount }}<br>
-                            Equity: {{ investment.equity_percentage }}%
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% else %}
-                <p>No investments yet.</p>
-                {% endif %}
+{% if project.get('investments', []) %}
+<div class="investment-details">
+    <h4>Investment Details</h4>
+    <ul>
+        {% for investment in project.investments %}
+        <li>
+            <strong>Investor:</strong> {{ investment.investor_name }}<br>
+            <strong>Amount:</strong> ${{ "%.2f"|format(investment.amount) }}<br>
+            <strong>Equity:</strong> {{ "%.2f"|format(investment.equity_percentage) }}%<br>
+            <strong>Date:</strong> {{ investment.timestamp.strftime('%Y-%m-%d %H:%M') if investment.timestamp else 'N/A' }}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+<p>No investments yet.</p>
+{% endif %}
             </div>
             {% else %}
             <p>No projects created yet. <a href="/create-project">Create one now</a>.</p>
