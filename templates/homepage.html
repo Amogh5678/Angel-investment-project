@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelFunder</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="/">AngelFundr</a>
+            </div>
+            <nav>
+                <ul>
+                    {% if session['name'] %}
+                        <li>Welcome, {{ session['name'] }}</li>
+                    {% else %}
+                        <li><a href="/register">Register/Login</a></li>
+                    {% endif %}
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact-us">Contact Us</a></li>
+                    {% if session['name'] %}
+                        <li><a href="/logout">Logout</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        <div class="cta-container">
+            <a href="#ex" class="cta-button">Explore more →</a>
+        </div>
+        <div class="hero-text">
+            <h1 class="main-headline">Built to scale all private funds</h1>
+            <p>AngelFundr provides investors and innovators with the tools to grow.</p>
+            <p>Your platform to connect with investors who help grow businesses.</p>
+        </div>
+    </header>
+    
+    <section class="main-content">
+        <section id="ex" class="feature-section">
+            <div class="feature-card">
+                <img src="../static/images/explore.jpg" alt="Explore">
+                <h3>Explore</h3>
+                <p>Discover exciting startup opportunities.</p>
+            </div>
+            
+            <div class="feature-card" onclick="checkLoginBeforeFundRaise();">
+                <img src="../static/images/collaborate.jpg" alt="FundRaise">
+                <h3>Collaborate</h3>
+                <p>Partner with founders and co-investors.</p>
+            </div>
+            
+            <div class="feature-card" onclick="checkLoginBeforeInvest();">
+                <img src="../static/images/invest.jpg" alt="Invest">
+                <h3>Invest</h3>
+                <p>Seamlessly fund ventures you believe in.</p>
+            </div>
+            
+            <div class="feature-card">
+                <img src="../static/images/groww.jpg" alt="Grow">
+                <h3>Grow</h3>
+                <p>Expand your portfolio and knowledge.</p>
+            </div>
+        </section>
+    </section>
+
+    <footer>
+        <div class="footer-links">
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+        </div>
+        <div id="contact-us" class="social-media">
+            <a href="#" class="social-icon"><img src="../static/images/fb.jpg" alt="Facebook"></a>
+            <a href="#" class="social-icon"><img src="../static/images/twitter.png" alt="Twitter"></a>
+            <a href="#" class="social-icon"><img src="../static/images/linked-in.webp" alt="Linked-In"></a>
+        </div>
+        <div class="contact-info">
+            <p>Email: contact@angelfundr.com</p>
+            <p>Phone: 123-456-7890</p>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 AngelFundr. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        function checkLoginBeforeFundRaise() {
+            {% if session['user_id'] %}
+                window.location.href = "{{ url_for('startup_dashboard') }}"; // Redirect to create project
+            {% else %}
+                window.location.href = "/login?next={{ url_for('create_project') }}"; // Redirect to login
+            {% endif %}
+        }
+
+        function checkLoginBeforeInvest() {
+            {% if session['user_id'] %}
+                window.location.href = "{{ url_for('investor_dashboard') }}";
+            {% else %}
+                window.location.href = "/login?next={{ url_for('investor_dashboard') }}"; // Redirect to login
+            {% endif %}
+        }
+    </script>
+</body>
+</html>
