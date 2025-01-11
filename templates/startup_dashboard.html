@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Startup Dashboard</title>
     <link rel="stylesheet" href="../static/css/startup.css">
-<<<<<<< HEAD
     <style>
         .progress-bar {
             background-color: #f3f3f3;
@@ -35,8 +34,6 @@
             margin-bottom: 10px;
         }
     </style>
-=======
->>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
 </head>
 <body>
     <header>
@@ -58,7 +55,6 @@
                 <h3>{{ project.title }}</h3>
                 <p>{{ project.description }}</p>
                 <p>Funding Goal: ${{ project.funding_goal }}</p>
-<<<<<<< HEAD
                 <p>Current Funding: ${{ project.current_funding or 0 }}</p>
                 <p>Deadline: {{ project.deadline }}</p>
                 <p>Status: {{ project.get('status', 'active').title() }}</p>
@@ -89,10 +85,6 @@
                 {% else %}
                 <p>No investments yet.</p>
                 {% endif %}
-=======
-                <p>Current Funding: ${{ project.current_funding }}</p>
-                <p>Deadline: {{ project.deadline }}</p>
->>>>>>> 82195f08312954b38cfee1f1c756d06dd37e39c8
             </div>
             {% else %}
             <p>No projects created yet. <a href="/create-project">Create one now</a>.</p>
