@@ -5,95 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AngelFunder</title>
     <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <header>
+    <div class="particle-background" id="particles-js"></div>
+    
+    <header class="glass-effect">
         <div class="header-container">
             <div class="logo">
-                <a href="/">AngelFundr</a>
+                <a href="/">AngelFundr<span class="logo-dot">.</span></a>
             </div>
             <nav>
                 <ul>
                     {% if session['name'] %}
-                        <li>Welcome, {{ session['name'] }}</li>
+                        <li class="welcome-msg">Welcome, {{ session['name'] }}</li>
                     {% else %}
-                        <li><a href="/register">Register/Login</a></li>
+                        <li><a href="/register" class="nav-link">Register/Login</a></li>
                     {% endif %}
-                    <li><a href="/">Home</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#contact-us">Contact Us</a></li>
+                    <li><a href="/" class="nav-link active">Home</a></li>
+                    <li><a href="#about" class="nav-link">About Us</a></li>
+                    <li><a href="#contact-us" class="nav-link">Contact Us</a></li>
                     {% if session['name'] %}
-                        <li><a href="/logout">Logout</a></li>
+                        <li><a href="/logout" class="nav-link">Logout</a></li>
                     {% endif %}
                 </ul>
             </nav>
         </div>
-        <div class="cta-container">
-            <a href="#ex" class="cta-button">Explore more →</a>
-        </div>
-        <div class="hero-text">
-            <h1 class="main-headline">Built to scale all private funds</h1>
-            <p>AngelFundr provides investors and innovators with the tools to grow.</p>
-            <p>Your platform to connect with investors who help grow businesses.</p>
+        
+        <div class="hero-section">
+            <div class="hero-text">
+                <h1 class="main-headline">Built to scale all private funds</h1>
+                <p class="hero-subtitle">AngelFundr provides investors and innovators with the tools to grow.</p>
+                <p class="hero-description">Your platform to connect with investors who help grow businesses.</p>
+                <div class="cta-container">
+                    <a href="#ex" class="cta-button">Explore more <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="hero-stats glass-effect">
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Startups Funded</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">$100M+</span>
+                    <span class="stat-label">Total Investment</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">10k+</span>
+                    <span class="stat-label">Active Investors</span>
+                </div>
+            </div>
         </div>
     </header>
     
     <section class="main-content">
         <section id="ex" class="feature-section">
-            <div class="feature-card">
+            <div class="feature-card glass-effect">
+                <div class="feature-icon">
+                    <i class="fas fa-search"></i>
+                </div>
                 <img src="../static/images/explore.jpg" alt="Explore">
                 <h3>Explore</h3>
-                <p>Discover exciting startup opportunities.</p>
+                <p>Discover exciting startup opportunities</p>
+                <a href="#" class="feature-link">Learn More <i class="fas fa-chevron-right"></i></a>
             </div>
             
-            <div class="feature-card" onclick="checkLoginBeforeFundRaise();">
+            <div class="feature-card glass-effect" onclick="checkLoginBeforeFundRaise();">
+                <div class="feature-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
                 <img src="../static/images/collaborate.jpg" alt="FundRaise">
                 <h3>Collaborate</h3>
-                <p>Partner with founders and co-investors.</p>
+                <p>Partner with founders and co-investors</p>
+                <a href="#" class="feature-link">Start Now <i class="fas fa-chevron-right"></i></a>
             </div>
             
-            <div class="feature-card" onclick="checkLoginBeforeInvest();">
+            <div class="feature-card glass-effect" onclick="checkLoginBeforeInvest();">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
                 <img src="../static/images/invest.jpg" alt="Invest">
                 <h3>Invest</h3>
-                <p>Seamlessly fund ventures you believe in.</p>
+                <p>Seamlessly fund ventures you believe in</p>
+                <a href="#" class="feature-link">Invest Now <i class="fas fa-chevron-right"></i></a>
             </div>
             
-            <div class="feature-card">
+            <div class="feature-card glass-effect">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
                 <img src="../static/images/groww.jpg" alt="Grow">
                 <h3>Grow</h3>
-                <p>Expand your portfolio and knowledge.</p>
+                <p>Expand your portfolio and knowledge</p>
+                <a href="#" class="feature-link">Get Started <i class="fas fa-chevron-right"></i></a>
             </div>
         </section>
     </section>
 
-    <footer>
-        <div class="footer-links">
-            <ul>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">FAQ</a></li>
-            </ul>
+    <footer class="glass-effect">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Connect With Us</h4>
+                <div class="social-media">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            
+            <div id="contact-us" class="footer-section">
+                <h4>Contact Info</h4>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> contact@angelfundr.com</p>
+                    <p><i class="fas fa-phone"></i> 123-456-7890</p>
+                </div>
+            </div>
         </div>
-        <div id="contact-us" class="social-media">
-            <a href="#" class="social-icon"><img src="../static/images/fb.jpg" alt="Facebook"></a>
-            <a href="#" class="social-icon"><img src="../static/images/twitter.png" alt="Twitter"></a>
-            <a href="#" class="social-icon"><img src="../static/images/linked-in.webp" alt="Linked-In"></a>
-        </div>
-        <div class="contact-info">
-            <p>Email: contact@angelfundr.com</p>
-            <p>Phone: 123-456-7890</p>
-        </div>
+        
         <div class="footer-bottom">
             <p>&copy; 2024 AngelFundr. All Rights Reserved.</p>
         </div>
     </footer>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80 },
+                color: { value: '#64ffda' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5 },
+                size: { value: 3 },
+                line_linked: {
+                    enable: true,
+                    color: '#64ffda',
+                    opacity: 0.2
+                },
+                move: {
+                    enable: true,
+                    speed: 2
+                }
+            }
+        });
+
         function checkLoginBeforeFundRaise() {
             {% if session['user_id'] %}
-                window.location.href = "{{ url_for('startup_dashboard') }}"; // Redirect to create project
+                window.location.href = "{{ url_for('startup_dashboard') }}";
             {% else %}
-                window.location.href = "/login?next={{ url_for('create_project') }}"; // Redirect to login
+                window.location.href = "/login?next={{ url_for('create_project') }}";
             {% endif %}
         }
 
@@ -101,7 +170,7 @@
             {% if session['user_id'] %}
                 window.location.href = "{{ url_for('investor_dashboard') }}";
             {% else %}
-                window.location.href = "/login?next={{ url_for('investor_dashboard') }}"; // Redirect to login
+                window.location.href = "/login?next={{ url_for('investor_dashboard') }}";
             {% endif %}
         }
     </script>
