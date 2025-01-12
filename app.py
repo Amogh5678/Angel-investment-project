@@ -200,6 +200,32 @@ def startup_dashboard():
     return redirect("/login")
 
 
+# @app.route("/investor-dashboard")
+# def investor_dashboard():
+#     if "role" in session and session["role"] == "investor":
+#         user_id = session["user_id"]
+        
+#         # Fetch projects the user has invested in
+#         user_investments = []
+#         investments = mongo.db.projects.find({"investments.investor_id": ObjectId(user_id)})
+#         for project in investments:
+#             for investment in project["investments"]:
+#                 if str(investment["investor_id"]) == user_id:
+#                     user_investments.append({
+#                         "project_title": project["title"],
+#                         "project_description": project["description"],
+#                         "amount": investment["amount"],
+#                         "equity_percentage": investment["equity_percentage"],
+#                         "status": project["status"],
+#                         "deadline": project["deadline"]
+#                     })
+        
+#         # Fetch all available projects
+#         projects = list(mongo.db.projects.find())
+#         return render_template("investor_dashboard.html", name=session["name"], projects=projects, user_investments=user_investments)
+#     return redirect("/login")
+
+
 @app.route("/investor-dashboard")
 def investor_dashboard():
     if "role" in session and session["role"] == "investor":
@@ -220,13 +246,39 @@ def investor_dashboard():
                         "deadline": project["deadline"]
                     })
         
-        # Fetch all available projects
-        projects = list(mongo.db.projects.find())
-        return render_template("investor_dashboard.html", name=session["name"], projects=projects, user_investments=user_investments)
+        # Fetch only approved and not fully funded projects
+        projects = list(mongo.db.projects.find({
+            "status": "Approved",
+            "$expr": {
+                "$lt": ["$current_funding", "$funding_goal"]  # Only get projects where current funding is less than goal
+            }
+        }))
+        
+        # Calculate remaining funding for each project
+        for project in projects:
+            # Calculate current funding if not already set
+            if "current_funding" not in project:
+                current_funding = sum(inv["amount"] for inv in project.get("investments", []))
+                project["current_funding"] = current_funding
+            
+            # Calculate remaining funding
+            project["remaining_funding"] = project["funding_goal"] - project["current_funding"]
+            
+            # Calculate remaining equity
+            total_equity_taken = sum(inv["equity_percentage"] for inv in project.get("investments", []))
+            project["remaining_equity"] = project.get("total_equity", 0) - total_equity_taken
+            
+            # Remove projects that are fully funded or have no remaining equity
+            if project["remaining_funding"] <= 0 or project["remaining_equity"] <= 0:
+                projects.remove(project)
+        
+        return render_template(
+            "investor_dashboard.html",
+            name=session["name"],
+            projects=projects,
+            user_investments=user_investments
+        )
     return redirect("/login")
-
-
-
 
 
 # Route to create a project (Startup)
