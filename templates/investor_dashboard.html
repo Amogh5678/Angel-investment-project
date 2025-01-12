@@ -97,104 +97,232 @@
                 {% endif %}
             </div>
         </section>
+    
+    <!-- Keep the existing header and overview sections unchanged -->
 
-        <!-- Explore Projects Section -->
-        <section id="explore" class="explore-section">
-            <h2><i class="fas fa-compass"></i> Explore Projects</h2>
-            <div class="project-grid">
-                {% for project in projects %}
-                <div class="project-card glass-effect">
-                    <div class="card-header">
-                        <h3>{{ project.title }}</h3>
-                        <span class="status-badge {{ project.get('status', 'active') }}">
-                            {{ project.get('status', 'active').title() }}
-                        </span>
+    <!-- Update the Explore Projects section with these changes -->
+    <section id="explore" class="explore-section">
+        <h2><i class="fas fa-compass"></i> Explore Projects</h2>
+        <div class="project-grid">
+            {% for project in projects %}
+            <div class="project-card glass-effect">
+                <div class="card-header">
+                    <h3>{{ project.title }}</h3>
+                    <span class="status-badge {{ project.get('status', 'active') }}">
+                        {{ project.get('status', 'active').title() }}
+                    </span>
+                </div>
+                <div class="card-content">
+                    <p class="description">{{ project.description }}</p>
+                    <div class="funding-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {{ (project.current_funding / project.funding_goal * 100)|round(2) }}%"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span>${{ "%.2f"|format(project.current_funding|default(0)) }} raised</span>
+                            <span>Goal: ${{ "%.2f"|format(project.funding_goal) }}</span>
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <p class="description">{{ project.description }}</p>
-                        <div class="funding-progress">
-                            <div class="progress-bar">
-                                <div class="progress" style="width: {{ (project.current_funding / project.funding_goal * 100)|round(2) }}%"></div>
-                            </div>
-                            <div class="progress-stats">
-                                <span>${{ project.current_funding|default(0) }} raised</span>
-                                <span>Goal: ${{ project.funding_goal }}</span>
-                            </div>
+                    <div class="project-details">
+                        <div class="detail-item">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Total Equity: {{ "%.2f"|format(project.get('total_equity', 0)) }}%</span>
                         </div>
-                        <div class="project-details">
-                            <div class="detail-item">
-                                <i class="fas fa-chart-pie"></i>
-                                <span>Total Equity: {{ project.get('total_equity', 0) }}%</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-percentage"></i>
-                                <span>Available: {{ project.get('remaining_equity', project.get('total_equity', 0)) }}%</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-calendar"></i>
-                                <span>Deadline: {{ project.deadline }}</span>
-                            </div>
+                        <div class="detail-item">
+                            <i class="fas fa-percentage"></i>
+                            <span>Available: {{ "%.2f"|format(project.get('remaining_equity', project.get('total_equity', 0))) }}%</span>
                         </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Deadline: {{ project.deadline }}</span>
+                        </div>
+                    </div>
 
-                        {% if project.get('status', 'active') == 'active' and project.get('remaining_equity', 0) > 0 %}
-                        <form class="investment-form" action="/invest/{{ project._id }}" method="POST">
-                            <div class="form-group">
-                                <label for="investment">Investment Amount ($)</label>
-                                <input 
-                                    type="number" 
-                                    name="investment" 
-                                    required 
-                                    min="1" 
-                                    placeholder="Enter amount"
-                                    oninput="calculateEquity(event, {{ project.funding_goal }}, {{ project.get('total_equity', 0) }})">
-                                <p class="calculated-equity"></p>
-                            </div>
-                            <button type="submit" class="invest-button">
-                                <i class="fas fa-hand-holding-usd"></i> Invest Now
-                            </button>
-                        </form>
-                        {% else %}
-                        <div class="status-message">
-                            {% if project.get('status', 'active') == 'completed' %}
-                                <i class="fas fa-check-circle"></i> Funding Goal Reached
-                            {% elif project.get('remaining_equity', 0) <= 0 %}
-                                <i class="fas fa-info-circle"></i> No More Equity Available
-                            {% endif %}
+                    {% if project.get('status') == 'Approved' and project.get('remaining_equity', 0) > 0 %}
+                    <form class="investment-form" action="/invest/{{ project._id }}" method="POST" id="invest-form-{{ project._id }}">
+                        <div class="form-group">
+                            <label for="investment-{{ project._id }}">Investment Amount ($)</label>
+                            <input 
+                                type="number" 
+                                id="investment-{{ project._id }}"
+                                name="investment" 
+                                required 
+                                min="1" 
+                                step="0.01"
+                                placeholder="Enter amount"
+                                oninput="calculateEquity('{{ project._id }}', {{ project.funding_goal }}, {{ project.get('total_equity', 0) }}, {{ project.get('remaining_equity', 0) }})">
+                            <p class="calculated-equity" id="equity-{{ project._id }}"></p>
+                            <p class="error-message" id="error-{{ project._id }}" style="color: red; display: none;"></p>
                         </div>
-                        {% endif %}
-
-                        {% if project.get('investments', []) %}
-                        <div class="investment-history">
-                            <h4>Investment History</h4>
-                            <ul>
-                            {% for investment in project.investments %}
-                                <li>
-                                    <i class="fas fa-dollar-sign"></i> ${{ investment.amount }} 
-                                    <i class="fas fa-chart-pie"></i> {{ investment.equity_percentage }}%
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        </div>
+                        <button type="submit" class="invest-button" id="submit-{{ project._id }}">
+                            <i class="fas fa-hand-holding-usd"></i> Invest Now
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="status-message">
+                        {% if project.get('status') != 'Approved' %}
+                            <i class="fas fa-info-circle"></i> Project is pending approval
+                        {% elif project.get('remaining_equity', 0) <= 0 %}
+                            <i class="fas fa-info-circle"></i> No More Equity Available
                         {% endif %}
                     </div>
+                    {% endif %}
+
+                    {% if project.get('investments', []) %}
+                    <div class="investment-history">
+                        <h4>Investment History</h4>
+                        <ul>
+                        {% for investment in project.investments %}
+                            <li>
+                                <i class="fas fa-dollar-sign"></i> ${{ "%.2f"|format(investment.amount) }} 
+                                <i class="fas fa-chart-pie"></i> {{ "%.2f"|format(investment.equity_percentage) }}%
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
                 </div>
-                {% else %}
-                <div class="empty-state glass-effect">
-                    <i class="fas fa-folder-open"></i>
-                    <p>No projects available at the moment.</p>
-                </div>
-                {% endfor %}
             </div>
-        </section>
-    </main>
+            {% else %}
+            <div class="empty-state glass-effect">
+                <i class="fas fa-folder-open"></i>
+                <p>No projects available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
 
+    <!-- Update the JavaScript section
     <script>
-        function calculateEquity(event, fundingGoal, totalEquity) {
-            const amount = parseFloat(event.target.value) || 0;
-            const equity = ((amount / fundingGoal) * totalEquity).toFixed(2);
-            const equityDisplay = event.target.closest('form').querySelector('.calculated-equity');
-            equityDisplay.textContent = equity > 0 ? `Calculated Equity: ${equity}%` : '';
+        function calculateEquity(projectId, fundingGoal, totalEquity, remainingEquity) {
+            const inputElement = document.getElementById(`investment-${projectId}`);
+            const equityDisplay = document.getElementById(`equity-${projectId}`);
+            const errorDisplay = document.getElementById(`error-${projectId}`);
+            const submitButton = document.getElementById(`submit-${projectId}`);
+            
+            const amount = parseFloat(inputElement.value) || 0;
+            const calculatedEquity = ((amount / fundingGoal) * totalEquity).toFixed(2);
+            
+            // Clear previous messages
+            errorDisplay.style.display = 'none';
+            submitButton.disabled = false;
+            
+            if (amount <= 0) {
+                equityDisplay.textContent = '';
+                return;
+            }
+            
+            // Display calculated equity
+            equityDisplay.textContent = `Calculated Equity: ${calculatedEquity}%`;
+            
+            // Validate against remaining equity
+            if (parseFloat(calculatedEquity) > remainingEquity) {
+                errorDisplay.textContent = `Maximum available equity is ${remainingEquity}%`;
+                errorDisplay.style.display = 'block';
+                submitButton.disabled = true;
+            }
         }
+
+        // Add form submission handling
+        document.querySelectorAll('.investment-form').forEach(form => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const submitButton = form.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form)
+                    });
+                    
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        const data = await response.json();
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                    }
+                } catch (error) {
+                    const projectId = form.id.split('-')[2];
+                    const errorDisplay = document.getElementById(`error-${projectId}`);
+                    errorDisplay.textContent = error.message;
+                    errorDisplay.style.display = 'block';
+                    submitButton.disabled = false;
+                }
+            });
+        });
+    </script> -->
+
+    <!-- // Update the JavaScript section in investor_dashboard.html -->
+    <script>
+        function calculateEquity(projectId, fundingGoal, totalEquity, remainingEquity) {
+            const inputElement = document.getElementById(`investment-${projectId}`);
+            const equityDisplay = document.getElementById(`equity-${projectId}`);
+            const errorDisplay = document.getElementById(`error-${projectId}`);
+            const submitButton = document.getElementById(`submit-${projectId}`);
+            
+            const amount = parseFloat(inputElement.value) || 0;
+            const calculatedEquity = ((amount / fundingGoal) * totalEquity).toFixed(2);
+            
+            // Clear previous messages
+            errorDisplay.style.display = 'none';
+            submitButton.disabled = false;
+            
+            if (amount <= 0) {
+                equityDisplay.textContent = '';
+                return;
+            }
+            
+            // Display calculated equity
+            equityDisplay.textContent = `Calculated Equity: ${calculatedEquity}%`;
+            
+            // Validate against remaining equity
+            if (parseFloat(calculatedEquity) > remainingEquity) {
+                errorDisplay.textContent = `Maximum available equity is ${remainingEquity}%`;
+                errorDisplay.style.display = 'block';
+                submitButton.disabled = true;
+            }
+        }
+
+        // Updated form submission handling
+        document.querySelectorAll('.investment-form').forEach(form => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const submitButton = form.querySelector('button[type="submit"]');
+                const projectId = form.id.split('-')[2];
+                const errorDisplay = document.getElementById(`error-${projectId}`);
+                
+                submitButton.disabled = true;
+                errorDisplay.style.display = 'none';
+                
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                } catch (error) {
+                    errorDisplay.textContent = error.message;
+                    errorDisplay.style.display = 'block';
+                    submitButton.disabled = false;
+                }
+            });
+        });
     </script>
+
+
+
+
 </body>
 </html>

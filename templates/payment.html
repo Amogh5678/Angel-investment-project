@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngelFundr - Payment</title>
+    <link rel="stylesheet" href="../static/css/investor.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <header class="glass-effect">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/">AngelFundr<span class="logo-dot">.</span></a>
+            </div>
+            <nav>
+                <ul>
+                    <li class="welcome-msg">Welcome, {{ name }}</li>
+                    <li><a href="/investor-dashboard" class="nav-link">Dashboard</a></li>
+                    <li><a href="/logout" class="nav-link">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+   
+    <div class="payment-container">
+        <div class="payment-details">
+            <h2>Investment Details</h2>
+            <h3>{{ project.title }}</h3>
+            <div class="details">
+                <p><strong>Investment Amount:</strong> ${{ "%.2f"|format(amount) }}</p>
+                <p><strong>Equity Percentage:</strong> {{ "%.2f"|format(equity_percentage) }}%</p>
+            </div>
+            
+            <form id="payment-form">
+                <div id="payment-element">
+                    <!-- Stripe Element will be inserted here -->
+                </div>
+                <button id="submit">
+                    <span id="button-text">Pay now</span>
+                    <div id="spinner" class="spinner hidden"></div>
+                </button>
+                <div id="payment-message" class="hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    
+
+
+    <style>
+        .payment-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .payment-card {
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .project-summary {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(79, 70, 229, 0.9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background: rgba(79, 70, 229, 1);
+        }
+
+        .security-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: #ff4444;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+    </style>
+
+    <script>
+
+        // // payment.html - Fixed JavaScript Code
+        // const stripe = Stripe('pk_test_51QgOg4Kjkoqs3fx5TJqHrwb4aBPjHeNxykKD6bASzTDF13vPIZ89sdumhJvQWtvaavfHaboa65M32Yo9dMohejCa00SGCRcvgx');
+        // let elements;
+
+        // initialize();
+
+        // async function initialize() {
+        //     try {
+        //         const response = await fetch(`/create-payment-intent/${projectId}`, {
+        //             method: "POST",
+        //         });
+                
+        //         if (!response.ok) {
+        //             throw new Error('Failed to create payment intent');
+        //         }
+                
+        //         const { clientSecret } = await response.json();
+                
+        //         const appearance = {
+        //             theme: 'stripe',
+        //             variables: {
+        //                 colorPrimary: '#0570de',
+        //             }
+        //         };
+                
+        //         elements = stripe.elements({ 
+        //             appearance, 
+        //             clientSecret 
+        //         });
+
+        //         const paymentElement = elements.create("payment");
+        //         paymentElement.mount("#payment-element");
+                
+        //         // Set up form submission
+        //         const form = document.getElementById('payment-form');
+        //         form.addEventListener('submit', handleSubmit);
+                
+        //     } catch (e) {
+        //         console.error("Error:", e);
+        //         showMessage("Failed to initialize payment. Please try again.");
+        //     }
+        // }
+
+    
+    // Add this at the top to get the project ID from Flask
+        const projectId = "{{ project._id }}";  // This will inject the project ID from Flask
+
+        // Rest of your JavaScript code remains the same
+        const stripe = Stripe('pk_test_51QgOg4Kjkoqs3fx5TJqHrwb4aBPjHeNxykKD6bASzTDF13vPIZ89sdumhJvQWtvaavfHaboa65M32Yo9dMohejCa00SGCRcvgx');
+        let elements;
+        
+        initialize();
+
+        async function initialize() {
+            try {
+                const response = await fetch(`/create-payment-intent/${projectId}`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'  // Add this header
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to create payment intent');
+                }
+                
+                const { clientSecret } = await response.json();
+                
+                const appearance = {
+                    theme: 'stripe',
+                    variables: {
+                        colorPrimary: '#0570de',
+                    }
+                };
+                
+                elements = stripe.elements({ 
+                    appearance, 
+                    clientSecret 
+                });
+
+                const paymentElement = elements.create("payment");
+                paymentElement.mount("#payment-element");
+                
+                // Set up form submission
+                const form = document.getElementById('payment-form');
+                form.addEventListener('submit', handleSubmit);
+                
+            } catch (e) {
+                console.error("Error:", e);
+                showMessage("Failed to initialize payment. Please try again. Error: " + e.message);
+            }
+        }
+
+    
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            setLoading(true);
+
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: `${window.location.origin}/confirm-investment/${projectId}`,
+                    },
+                });
+
+                if (error) {
+                    showMessage(error.message);
+                }
+                
+            } catch (e) {
+                showMessage("An unexpected error occurred.");
+            }
+            
+            setLoading(false);
+        }
+
+        function showMessage(messageText) {
+            const messageDiv = document.getElementById("payment-message");
+            messageDiv.textContent = messageText;
+            messageDiv.classList.remove("hidden");
+        }
+
+        function setLoading(isLoading) {
+            const submitButton = document.getElementById("submit");
+            const spinner = document.getElementById("spinner");
+            const buttonText = document.getElementById("button-text");
+
+            if (isLoading) {
+                submitButton.disabled = true;
+                spinner.classList.remove("hidden");
+                buttonText.classList.add("hidden");
+            } else {
+                submitButton.disabled = false;
+                spinner.classList.add("hidden");
+                buttonText.classList.remove("hidden");
+            }
+        }
+    </script>
+</body>
+</html>
