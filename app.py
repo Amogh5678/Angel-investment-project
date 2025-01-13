@@ -91,7 +91,7 @@ def register():
                 "phone": phone,
                 "age": age,
                 "role": role,
-                "created_at": datetime.datetime.utcnow()
+                "created_at": datetime.utcnow()
             }
 
             # Insert user with debug logging
